@@ -1,2 +1,2 @@
 # StreamApps
-Store all my Streamlit apps project
+Store all my Streamlit apps project here.
