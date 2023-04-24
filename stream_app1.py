@@ -10,9 +10,12 @@ from streamlit_lottie import st_lottie
 import requests 
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import plotly.express as px
 from PIL import Image
-sns.set()
+from pathlib import Path
+import base64
+#sns.set()
 
 # Setting the web app basic information
 st.set_page_config (page_title="US Housing market",
@@ -55,10 +58,27 @@ df_final= df_final[~df_final['period_begin'].isna()]
 #st.write(df_final.head()) 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~BUILDING THE WEB APP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Function to convert image to bytes
+# def img_to_bytes(img_path):
+#     img_bytes = Path(img_path).read_bytes()
+#     encoded = base64.b64encode(img_bytes).decode()
+#     return encoded
+
+# # Displaying Your Image in App
+# header_html = "<img src='E:/VS_Code/Webapps/StreamApps/resources/dsproject1.png.jpg;base64,{}' class='img-fluid'>".format(
+#     img_to_bytes("E:/VS_Code/Webapps/StreamApps/resources/dsproject1.png")
+# )
+
+with st.container():
+    image = Image.open("E:/VS_Code/Webapps/StreamApps/resources/dsproject2.png")
+    st.image(image, width=1050)
+    #st.markdown(header_html, unsafe_allow_html=True)
 
 # Add title and subtitle to the main interface
-st.title("U.S. Real Estate Insights")
-st.markdown("Where are the trendiest housing markets in the US? Select a metrics you are interested in to get answer. Hover over the map to view more details.")
+st.title("U.S.A Real Estate Insights")
+st.markdown("We are here to provide you with vital information about trend in the housing markets \
+            in the US? Select a metrics you are interested in to get the answer to you \
+            question. Hover over the map to view more details.")
 
 # Create three columns/filters
 col1, col2, col3 = st.columns(3)
@@ -133,25 +153,34 @@ geojson1 = folium.features.GeoJson(
 
 folium_static(m)
 
-st.write('Thanks to Matt Chapman for his insight tutorial')
+st.write('Ref: https://towardsdatascience.com/streamlit-hands-on-from-zero-to-your-first-awesome-web-app-2c28f9f4e214')
 st.markdown("---")
 
 # Create a sidebar 
 st.sidebar.markdown("### US Real Estate Market.")
-st.sidebar.markdown("Get an insight into the US Real Estate market. Choose how you would like to visualize it.")
-opt = st.sidebar.radio("Select a graph type", options=("Line", "Scatter", "Bar"))
+st.sidebar.markdown("Get some clear and concise insights into the US Real Estate market and\
+                     Choose how you would like to visualize it.")
+opt = st.sidebar.radio("Select a graph type:", options=("Line", "Scatter", "Bar"))
 if opt == "Line":
     # Visualize the data with seaborn and matplotlib 
-    fig, ax = plt.subplots(figsize=(10, 5), dpi=160)
+    fig, ax = plt.subplots(figsize=(10, 4), dpi=250)
     sns.lineplot(data=df_final, y=df_final['median_sale_price'], x=df_final['homes_sold'],
                  marker="o", ax=ax, color='deepskyblue')
-    ax.set_title('MEDIAN PRICE AND NUMBER OF HOMES SOLD PER STATE', fontsize=13,
-                fontweight='bold')
-    ax.set_ylabel('Median sale price')
-    ax.set_xlabel('Homes sold')
+     # Amend figure front and bacground color
+    sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
+    ax.grid(False)
+    ax.set_title('MEDIAN PRICE AND NUMBER OF HOMES SOLD PER STATE\n', fontsize=13,
+                fontweight='bold', color='white')
+    ax.set_ylabel('Median sale price', color='white')
+    ax.set_xlabel('Homes sold', color='white')
+    ax.tick_params(axis='both', colors='white')
+    # Format the x and y axis numbers
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:,.0f}'.format(x/1000) + 'K'))
+    ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:,.0f}'.format(x/1000) + 'K'))
+    sns.despine()
     plt.show()
     st.write(fig)
-if opt == "Scatter":
+elif opt == "Scatter":
     # Visualize the data with plotly
     fig = px.scatter(df_final, x=df_final['median_sale_price'], y=df_final['homes_sold'],
                 hover_name=df_final['name'], log_x=True, opacity=.8, 
@@ -170,14 +199,21 @@ if opt == "Scatter":
     fig.update_layout(title = '<b>MEDIAN PRICE AND NUMBER OF HOMES SOLD PER STATE</b>', title_x=0.2)
     #coloraxis_colorbar_x=1.2 # colobar position
     st.write(fig)
-if opt == 'Bar':
+elif opt == 'Bar':
     # Visualize the data with seaborn and matplotlib 
-    fig, ax = plt.subplots(figsize=(10, 5), dpi=160)
+    fig, ax = plt.subplots(figsize=(10, 4), dpi=250)
     sns.histplot(data=df_final, x='homes_sold', color='deepskyblue')
-    ax.set_title('FREQUENCY OF MEDIAN PRICE HOMES SOLD PER STATE', fontsize=13,
-                fontweight='bold')
-    ax.set_ylabel('Frequency')
-    ax.set_xlabel('Median sale price')
+    ax.set_title('FREQUENCY OF MEDIAN PRICE HOMES SOLD PER STATE\n', fontsize=13,
+                fontweight='bold', color='white')
+    # Amend figure front and bacground color
+    sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
+    ax.grid(False)
+    ax.set_ylabel('Frequency', color='white')
+    ax.set_xlabel('Median sale price', color='white')
+    ax.tick_params(axis='both', colors='white')
+     # Format the x and y axis numbers
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:,.0f}'.format(x/1000) + 'K'))
+    sns.despine()
     plt.show()
     st.write(fig)
 
@@ -208,7 +244,6 @@ with st.sidebar:
                 height=None,
                 width=None,
                 key=None )
-#st_lottie(lottie_file, key="hello")
 
 st.markdown("---")
 
@@ -218,7 +253,7 @@ with col1:
     st.write('Designed by:')
 with col2:
     image = Image.open('E:/VS_Code/Webapps/StreamApps/resources/techno.png')
-    st.image(image, width=250)
+    st.image(image, width=200)
 with col3:
     #st.write(' ')
     st_lottie(lottie_file, 
@@ -229,3 +264,4 @@ with col3:
             loop=True,
             reverse=False,
             quality='medium')
+st.markdown("---")
