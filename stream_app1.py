@@ -14,7 +14,7 @@ import matplotlib.ticker as ticker
 import plotly.express as px
 from PIL import Image
 from pathlib import Path
-import base64
+#import base64
 #sns.set()
 
 # Setting the web app basic information
