@@ -71,7 +71,7 @@ df_final= df_final[~df_final['period_begin'].isna()]
 
 with st.container():
     image = Image.open("E:/VS_Code/Webapps/StreamApps/resources/dsproject2.png")
-    st.image(image, width=1050)
+    st.image(image, width=1050, use_column_width=True)
     #st.markdown(header_html, unsafe_allow_html=True)
 
 # Add title and subtitle to the main interface
