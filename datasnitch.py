@@ -136,4 +136,5 @@ with left:
 with middle:
     st.write(' ')
 with right:
+    # Add logo to the bottom right position of the page
     st.image(image,  width=100, use_column_width=True)
