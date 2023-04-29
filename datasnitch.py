@@ -8,6 +8,9 @@ from  PIL import Image
 from validator_collection import validators
 from streamlit_extras.app_logo import add_logo
 from streamlit_option_menu import option_menu
+from streamlit.components.v1 import html
+from streamlit_chat import message
+import openai
 
 # Setting the web app basic information
 st.set_page_config (page_title="Data|Snitch",
@@ -122,8 +125,60 @@ if selected2 == 'Email us':
     
     # Calling the function
     local_css("style/style.css")
+
+# Add functionality to Ask Baba ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if selected2 == 'Ask Baba':
+    # """This function uses the OpenAI Completion API to generate a 
+    # response based on the given prompt. The temperature parameter controls 
+    # the randomness of the generated response. A higher temperature will result 
+    # in more random responses, while a lower temperature will result in more predictable responses."""
+    
+    # Set GPT-3 API Key
+    openai.api_key = st.secrets['api_secret']
+    # Defining a function to generate calls from the API
+    def generate_response(prompt):
+        completions = openai.Completion.create (
+            engine = "text-davinci-003",
+            prompt = prompt,
+            max_tokens = 1024,
+            n = 1,
+            stop = None,
+            temperature = 0.5,
+        )
+        message = completions.choices[0].text
+        return message
+    # Set a Title
+    st.title("🤖 Ask Baba anything!")
+    # Initializing streamlit session statement
+    if 'generated' not in st.session_state:
+        st.session_state['generated'] = []
+
+    if 'past' not in st.session_state:
+        st.session_state['past'] = []
+
+    # Defining function to handle user input
+    def get_text():
+        input_text = st.text_input("You: ","", key="input")
+        return input_text 
+    
+    # Assigning the function to a variable 
+    user_input = get_text()
+    
+    # Defining a condition to handle the response to the user input 
+    if user_input:
+        output = generate_response( user_input)
+        # adding input and output to a session state
+        st.session_state.past.append(user_input)
+        st.session_state.generated.append(output)
+    
+    # Checking if there is an ouput 
+    if st.session_state['generated']:
+        for i in range(len(st.session_state['generated'])-1, -1, -1):
+            message(st.session_state["generated"][i], key=str(i))
+            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+
      
-# Define a line to delimit the footer part ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Define a line to delimit the footer part ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 st.markdown('---')
 
 # Define Brand Logo image
@@ -132,9 +187,29 @@ image = Image.open(r'E:/VS_Code/Webapps/StreamApps/resources/image/techno.png')
 # Add 3 columns with different width
 left, middle, right = st.columns([0.3, 0.5, 0.2])
 with left:
-    st.write(' ')
+    #st.write(' ')
+    button = """
+    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" 
+    data-name="bmc-button" data-slug="dmcpartnerx" data-color="#FFDD00" data-emoji="🍵"  
+    data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" 
+    data-coffee-color="#ffffff" ></script>
+    """
+    html(button, height=70, width=220)
+    st.markdown(
+        """
+        <style>
+            iframe[width="150"] {
+                position: fixed;
+                bottom: 60px;
+                left: 40px;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True)
 with middle:
     st.write(' ')
 with right:
     # Add logo to the bottom right position of the page
-    st.image(image,  width=100, use_column_width=True)
+    st.image(image,  width=150, use_column_width=True)
+
+    
