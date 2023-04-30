@@ -200,7 +200,7 @@ elif opt == 'Bar':
     ax.set_ylabel('Frequency', color='white')
     ax.set_xlabel('Median sale price', color='white')
     ax.tick_params(axis='both', colors='white')
-     # Format the x and y axis numbers
+    # Format the x and y axis numbers
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:,.0f}'.format(x/1000) + 'K'))
     sns.despine()
     plt.show()
