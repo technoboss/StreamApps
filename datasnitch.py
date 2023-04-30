@@ -184,8 +184,10 @@ if selected2 == "EDA":
         if opt == 'Bar':
             selected_column = st.sidebar.selectbox('Select a column', df.columns)
             st.write("Histogram Plots")
-            fig, ax = plt.subplots(figsize=(10, 4), dpi=250)
+            fig, ax = plt.subplots(figsize=(10, 4), dpi=200)
             sns.histplot(df[selected_column], color='deepskyblue')
+            Plot_title = f'{selected_column} histogram plot'
+            ax.set_title(Plot_title , fontweight='bold', color='white', fontsize=15)
             sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
             ax.grid(False)
             ax.xaxis.label.set_color('white')
@@ -195,15 +197,28 @@ if selected2 == "EDA":
             plt.xticks(rotation = 90)
             st.pyplot(fig)
             #AgGrid(df)
+
+             # Download button to download the generated plot
+            fn = 'Histogram.png'
+            plt.savefig(fn, bbox_inches='tight')
+            with open(fn, "rb") as img:
+                btn = st.download_button(
+                    label="Download Plot",
+                    data=img,
+                    file_name=fn,
+                    mime="image/png"
+                )
         
-        if opt == "Line":            
+        if opt == "Line":          
             st.write("Line plot")
             x_axis = st.sidebar.selectbox('Select the x-axis', df.columns)
             y_axis = st.sidebar.selectbox('Select the y-axis', df.columns)
             # Visualize the data with seaborn and matplotlib 
-            fig, ax = plt.subplots(figsize=(10, 4), dpi=250)
+            fig, ax = plt.subplots(figsize=(10, 4), dpi=200)
             sns.lineplot(data=df, x=df[x_axis], y=df[y_axis],
                             marker="o", ax=ax, color='deepskyblue')
+            Plot_title = f'{x_axis} and {y_axis} line plot'
+            ax.set_title(Plot_title , fontweight='bold', color='white', fontsize=15)
             # Amend figure front and bacground color
             sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
             ax.grid(False)
@@ -213,6 +228,17 @@ if selected2 == "EDA":
             sns.despine()
             plt.xticks(rotation = 90)
             st.pyplot(fig)
+
+            # Download button to download the generated plot
+            fn = 'line.png'
+            plt.savefig(fn, bbox_inches='tight')
+            with open(fn, "rb") as img:
+                btn = st.download_button(
+                    label="Download Plot",
+                    data=img,
+                    file_name=fn,
+                    mime="image/png"
+                )
 
         if opt == "Scatter":
             st.write("Scatter plot")
