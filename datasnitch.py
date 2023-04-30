@@ -75,7 +75,7 @@ st.markdown('---')
 # ADD FUNCTIONALITY TO ASK BABA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected2 == 'Ask Baba':
     # """This function uses the OpenAI Completion API to generate a 
-    # response based on a given prompt. The temperature parameter controls 
+    # response based on the given prompt. The temperature parameter controls 
     # the randomness of the generated response. A higher temperature will result 
     # in more random responses, while a lower temperature will result in more predictable responses."""
     
