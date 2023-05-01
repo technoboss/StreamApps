@@ -16,7 +16,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Setting the web app basic information
-st.set_page_config (page_title="Data|Snitch",
+st.set_page_config (page_title="Data|weiv",
                     page_icon=":game_die:",
                     layout="wide"
 ) 
@@ -36,34 +36,19 @@ with st.container():
     image = Image.open("E:/VS_Code/Webapps/StreamApps/resources/image/dsproject2.png")
     st.image(image, width=1050, use_column_width=True)
 
-# Add logo to sidebar
-#@extra
-def add_logo(logo_url: str):
-    validators.url(logo_url) 
-    st.markdown(
-        f"""
-       <style>
-            [data-testid="stSidebarNav"] {{
-                background-image: url({logo_url});
-                background-repeat: no-repeat;
-                padding-top: 80px;;
-                background-position: 20px 20px;
-            }}
-        </style>
-        """,
-        unsafe_allow_html=True)
-
-with st.sidebar:
-     add_logo("https://raw.githubusercontent.com/technoboss/StreamApps/main/resources/images/techno.png")
+# Adding Brand Logo image on top sidebar
+logo = Image.open(r'E:/VS_Code/Webapps/StreamApps/resources/image/techno.png')
+st.sidebar.image(logo, width=50, use_column_width=True)
 
 # Add a header and expander in side bar
-st.sidebar.markdown('<h1 style="font-size:2.5rem; font-family: Cooper Black; color: #FF9633">Data|Snitch</h1>', unsafe_allow_html=True)
+st.sidebar.markdown('<h1 style="font-size:2.5rem; font-family: Cooper Black; color: #FF9633">Data|weiv</h1>', unsafe_allow_html=True)
 
 # Add a text in an expander frame
 with st.sidebar.expander("About our App :rainbow:"):
      st.write("""
-        Use this simple app to convert your favorite photo to a pencil sketch, \
-        a grayscale image or an image with blurring effect. Hope you enjoy!
+        Use this simple app to explore your data in csv or excel file. before \
+        using this app you should clean your data first. I you any question \
+        just ask Baba. Hey, smile you are on Data|weiv and you will enjoy!
      """)
 # ADD A MENU WIDGET ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 selected2 = option_menu(None, ["Home", "EDA", "Ask Baba", "Email us"], 
@@ -127,15 +112,15 @@ if selected2 == 'Ask Baba':
 if selected2 == "EDA":
     # Add title 
     st.title('Get a Quick view in your Data!')
-    st.markdown('This app allows you to "Snitch" on your dataset, I mean \
-                explore and visualize it in various plots. Don\'t forget  \
-                Baba is your man, you can ask him anything you want to make \
-                your work easier.')
+    st.markdown('Here you can upload you data  and visualize it using \
+                various plot type. Don\'t forget Baba is your man, you can ask \
+                him anything you want to make your work easier.')
+    
     # To display a header text using css styling
     st.markdown(""" <style> .font {
     font-size:25px ; font-family: 'Cooper Black'; color: #FF9633;} 
     </style> """, unsafe_allow_html=True)
-    st.markdown('<p class="font">Upload a clean data file here...</p>', 
+    st.markdown('<p class="font">Please upload a clean data file here...</p>', 
                     unsafe_allow_html=True)
     
     # Defining 2 functions to load csv and excel files
@@ -151,14 +136,6 @@ if selected2 == "EDA":
     
     # Add a file uploader to allow users to upload photos
     uploaded_file = st.file_uploader("", type=['csv', 'xlsx'])
-
-    # Deploying session state
-    # if uploaded_file:
-    #     if 'datacsv_upload' in st.session_state:
-    #         df = st.session_state.datacsv_upload
-    #     else:
-    #         df = datacsv_upload()
-    #         st.session_state.datacsv_upload = df
 
     # Load the uploaded file
     if uploaded_file is not None:
@@ -182,7 +159,7 @@ if selected2 == "EDA":
     
         # Select columns in your frame
         if opt == 'Bar':
-            selected_column = st.sidebar.selectbox('Select a column', df.columns)
+            selected_column = st.sidebar.selectbox('Select a column for the bar plot', df.columns)
             st.write("Histogram Plots")
             fig, ax = plt.subplots(figsize=(10, 4), dpi=200)
             sns.histplot(df[selected_column], color='deepskyblue')
@@ -198,7 +175,7 @@ if selected2 == "EDA":
             st.pyplot(fig)
             #AgGrid(df)
 
-             # Download button to download the generated plot
+             # Button to download the generated plot
             fn = 'Histogram.png'
             plt.savefig(fn, bbox_inches='tight')
             with open(fn, "rb") as img:
@@ -208,7 +185,23 @@ if selected2 == "EDA":
                     file_name=fn,
                     mime="image/png"
                 )
-        
+            # Carrying out some counting on the data
+            col1, col2, col3 = st.columns([0.3, 0.6, 0.1])
+            with col1:
+                st.write('')
+            with col2:
+                st.write('Some quick statistics')
+                grp_bycol = st.sidebar.selectbox('Count', df.columns)
+                grp_bycol2 = st.sidebar.selectbox('By', df.columns)
+                st.dataframe(df.groupby([grp_bycol]).size().reset_index(name='Count').rename(columns={grp_bycol2:grp_bycol2}))
+            with col3:
+                st.write(' ')
+
+            # Add data Filter 
+            # data = st.sidebar.selectbox('Filter', df.columns)
+            # filter = st.sidebar.selectbox('By ', df.columns)
+            # st.dataframe()
+                         
         if opt == "Line":          
             st.write("Line plot")
             x_axis = st.sidebar.selectbox('Select the x-axis', df.columns)
@@ -229,7 +222,7 @@ if selected2 == "EDA":
             plt.xticks(rotation = 90)
             st.pyplot(fig)
 
-            # Download button to download the generated plot
+            # Button to download the generated plot
             fn = 'line.png'
             plt.savefig(fn, bbox_inches='tight')
             with open(fn, "rb") as img:
