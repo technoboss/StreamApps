@@ -47,7 +47,7 @@ st.sidebar.markdown('<h1 style="font-size:2.5rem; font-family: Cooper Black; col
 with st.sidebar.expander("About our App :rainbow:"):
      st.write("""
         Use this simple app to explore your data in csv or excel file. before \
-        using this app you should clean your data first. I you any question \
+        using this app you make sure your data is clean first. I you've any question, \
         just ask Baba. Hey, smile you are on Data|weiv and you will enjoy!
      """)
 # ADD A MENU WIDGET ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,62 +57,18 @@ selected2 = option_menu(None, ["Home", "EDA", "Ask Baba", "Email us"],
 selected2
 st.markdown('---')
 
-# ADD FUNCTIONALITY TO ASK BABA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if selected2 == 'Ask Baba':
-    # """This function uses the OpenAI Completion API to generate a 
-    # response based on the given prompt. The temperature parameter controls 
-    # the randomness of the generated response. A higher temperature will result 
-    # in more random responses, while a lower temperature will result in more predictable responses."""
-    
-    # Set GPT-3 API Key
-    openai.api_key = st.secrets['api_secret']
-    # Defining a function to generate calls from the API
-    def generate_response(prompt):
-        completions = openai.Completion.create (
-            engine = "text-davinci-003",
-            prompt = prompt,
-            max_tokens = 1024,
-            n = 1,
-            stop = None,
-            temperature = 0.5,
-        )
-        message = completions.choices[0].text
-        return message
-    # Set a Title
-    st.title("🤖 Ask Baba anything!")
-    # Initializing streamlit session statement
-    if 'generated' not in st.session_state:
-        st.session_state['generated'] = []
+# 1. ADD FUNCTIONALITY TO HOME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if selected2 == "Home":
+    video_file = open('E:/VS_Code/Webapps/StreamApps/resources/video/datascience2.mp4', 'rb')
+    video_bytes = video_file.read()
+    st.video(video_bytes)
 
-    if 'past' not in st.session_state:
-        st.session_state['past'] = []
 
-    # Defining function to handle user input
-    def get_text():
-        input_text = st.text_input("You: ","", key="input")
-        return input_text 
-    
-    # Assigning the function to a variable 
-    user_input = get_text()
-    
-    # Defining a condition to handle the response to the user input 
-    if user_input:
-        output = generate_response( user_input)
-        # adding input and output to a session state
-        st.session_state.past.append(user_input)
-        st.session_state.generated.append(output)
-    
-    # Checking if there is an ouput 
-    if st.session_state['generated']:
-        for i in range(len(st.session_state['generated'])-1, -1, -1):
-            message(st.session_state["generated"][i], key=str(i))
-            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
-
-# ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 2. ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected2 == "EDA":
     # Add title 
-    st.title('Get a Quick view in your Data!')
-    st.markdown('Here you can upload you data  and visualize it using \
+    st.title('Get a quick view in your data!')
+    st.markdown('Here you can upload your data and visualize it using \
                 various plot type. Don\'t forget Baba is your man, you can ask \
                 him anything you want to make your work easier.')
     
@@ -155,7 +111,7 @@ if selected2 == "EDA":
         # Defining an horizontal radio button   
         st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>',
                     unsafe_allow_html=True)
-        opt = st.sidebar.radio("Select a graph type:", options=("Bar", "Line", "Scatter"))
+        opt = st.sidebar.radio("1. Select a graph type:", options=("Bar", "Line", "Scatter"))
     
         # Select columns in your frame
         if opt == 'Bar':
@@ -186,17 +142,29 @@ if selected2 == "EDA":
                     mime="image/png"
                 )
             # Carrying out some counting on the data
-            col1, col2, col3 = st.columns([0.3, 0.6, 0.1])
-            with col1:
-                st.write('')
-            with col2:
-                st.write('Some quick statistics')
+            st.sidebar.markdown('---')
+            st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>',
+                    unsafe_allow_html=True)
+            stats = st.sidebar.radio("2. Select a quick Stats option:", options=("Count by", "Count"))
+            
+            if stats == "Count by":
                 grp_bycol = st.sidebar.selectbox('Count', df.columns)
                 grp_bycol2 = st.sidebar.selectbox('By', df.columns)
-                st.dataframe(df.groupby([grp_bycol]).size().reset_index(name='Count').rename(columns={grp_bycol2:grp_bycol2}))
-            with col3:
-                st.write(' ')
-
+                st.sidebar.markdown('---')
+                st.write('Count number events by:')
+                st.checkbox("Use container width", value=False, key="use_container_width")
+                st.dataframe(df.groupby([grp_bycol]).size().reset_index(name='Count')
+                                .rename(columns={grp_bycol2:grp_bycol2}),
+                                use_container_width=st.session_state.use_container_width)
+                
+            elif stats == "Count":
+                grp_bycol3 = st.sidebar.selectbox('Count events', df.columns)
+                st.sidebar.markdown('---')
+                st.write('Count only number of events:')
+                st.checkbox("Use container width", value=False, key="use_container_width")
+                st.dataframe(pd.DataFrame(df[grp_bycol3].value_counts()), 
+                                use_container_width=st.session_state.use_container_width)
+                
             # Add data Filter 
             # data = st.sidebar.selectbox('Filter', df.columns)
             # filter = st.sidebar.selectbox('By ', df.columns)
@@ -252,8 +220,61 @@ if selected2 == "EDA":
                               showlegend=False)
             
             st.write(fig)
+        
+# 3. ADD FUNCTIONALITY TO ASK BABA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if selected2 == 'Ask Baba':
+    # """This function uses the OpenAI Completion API to generate a 
+    # response based on the given prompt. The temperature parameter controls 
+    # the randomness of the generated response. A higher temperature will result 
+    # in more random responses, while a lower temperature will result in more predictable responses."""
     
-# ADD FONCTIONALITY TO EMAIL US ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Set GPT-3 API Key
+    openai.api_key = st.secrets['api_secret']
+    # Defining a function to generate calls from the API
+    def generate_response(prompt):
+        completions = openai.Completion.create (
+            engine = "text-davinci-003",
+            prompt = prompt,
+            max_tokens = 1024,
+            n = 1,
+            stop = None,
+            temperature = 0.5,
+        )
+        message = completions.choices[0].text
+        return message
+    
+    # Set a Title
+    st.title("🤖 Ask Baba anything!")
+
+    # Initializing streamlit session statement
+    if 'generated' not in st.session_state:
+        st.session_state['generated'] = []
+
+    if 'past' not in st.session_state:
+        st.session_state['past'] = []
+
+    # Defining function to handle user input
+    def get_text():
+        input_text = st.text_input("You: ","", key="input")
+        return input_text 
+    
+    # Assigning the function to a variable 
+    user_input = get_text()
+    
+    # Defining a condition to handle the response to the user input 
+    if user_input:
+        output = generate_response( user_input)
+        # adding input and output to a session state
+        st.session_state.past.append(user_input)
+        st.session_state.generated.append(output)
+    
+    # Checking if there is an ouput 
+    if st.session_state['generated']:
+        for i in range(len(st.session_state['generated'])-1, -1, -1):
+            message(st.session_state["generated"][i], key=str(i))
+            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+    
+# 4. ADD FONCTIONALITY TO EMAIL US ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected2 == 'Email us':
     st.header(':globe_with_meridians: Get in touch with us!')
     contact_form = """
@@ -309,4 +330,3 @@ with right:
     # Add logo to the bottom right position of the page
     st.image(image,  width=150, use_column_width=True)
 
-    
