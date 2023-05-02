@@ -14,6 +14,7 @@ import pandas as pd
 import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
+import panel as pn
 
 # Setting the web app basic information
 st.set_page_config (page_title="Data|weiv",
@@ -62,6 +63,7 @@ if selected2 == "Home":
     video_file = open('E:/VS_Code/Webapps/StreamApps/resources/video/datascience2.mp4', 'rb')
     video_bytes = video_file.read()
     st.video(video_bytes)
+    #st.video("https://youtu.be/BfuwXQLqQh8")
 
 
 # 2. ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
