@@ -40,20 +40,16 @@ with st.container():
     image = Image.open("E:/VS_Code/Webapps/StreamApps/resources/image/dsproject2.png")
     st.image(image, width=1050, use_column_width=True)
 
-# Adding Brand Logo image on top sidebar
-# logo = Image.open(r'E:/VS_Code/Webapps/StreamApps/resources/image/techno.png')
-# st.sidebar.image(logo, width=50, use_column_width=True)
-
 # Add a header and expander in side bar
-st.sidebar.markdown('<h1 style="font-size:2.5rem; font-family: Cooper Black; color: #FF9633">Data|weiv</h1>', unsafe_allow_html=True)
+# st.sidebar.markdown('<h1 style="font-size:2.5rem; font-family: Cooper Black; color: #FF9633">Data|weiv</h1>', unsafe_allow_html=True)
 
-# Add a text in an expander frame
-with st.sidebar.expander("About our App :rainbow:"):
-     st.write("""
-        Use this simple app to explore your data in csv or excel file. before \
-        using this app you make sure your data is clean first. I you've any question, \
-        just ask Baba. Hey, smile you are on Data|weiv and you will enjoy!
-     """)
+# # Add a text in an expander frame
+# with st.sidebar.expander("About our App :rainbow:"):
+#      st.write("""
+#         Use this simple app to explore your data in csv or excel file. before \
+#         using this app you make sure your data is clean first. I you've any question, \
+#         just ask Baba. Hey, smile you are on Data|weiv and you will enjoy!
+#      """)
 # ADD A MENU WIDGET ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 selected1 = option_menu(None, ["Home", "EDA", "Dash", "Baba", "Mailbox"], 
     icons=['house', 'bar-chart-fill', "graph-up-arrow", "person-check-fill", "mailbox"], 
@@ -63,7 +59,7 @@ st.markdown('---')
 
 # 1. ADD FUNCTIONALITY TO HOME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == "Home":
-    st.title(':red[**_Data|weiv_**,] a business EDA app 🐼')
+    st.title(':red[**_Data|weiv_**] 🐼 a business EDA app')
     video_file = open('E:/VS_Code/Webapps/StreamApps/resources/video/datascience2.mp4', 'rb')
     video_bytes = video_file.read()
     st.video(video_bytes)
@@ -137,13 +133,13 @@ if selected1 == "EDA":
             #AgGrid(df)
 
             # Button to download the generated plot
-            fn = 'Histogram.png'
-            plt.savefig(fn, bbox_inches='tight')
-            with open(fn, "rb") as img:
+            filename = 'Histogram.png'
+            plt.savefig(filename, bbox_inches='tight')
+            with open(filename, "rb") as img:
                 btn = st.download_button(
                     label="Download Plot",
                     data=img,
-                    file_name=fn,
+                    file_name=filename,
                     mime="image/png"
                 )
             # Carrying out some counting on the data
@@ -194,13 +190,13 @@ if selected1 == "EDA":
             st.pyplot(fig)
 
             # Button to download the generated plot
-            fn = 'line.png'
-            plt.savefig(fn, bbox_inches='tight')
-            with open(fn, "rb") as img:
+            filename = 'line.png'
+            plt.savefig(filename, bbox_inches='tight')
+            with open(filename, "rb") as img:
                 btn = st.download_button(
                     label="Download Plot",
                     data=img,
-                    file_name=fn,
+                    file_name=filename,
                     mime="image/png"
                 )
 
@@ -223,30 +219,10 @@ if selected1 == "EDA":
                               showlegend=False)
             
             st.write(fig)
-# 3. ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 3. ADD FUNCTIONALITY TO DASH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == "Dash": 
-    st.sidebar.header('Dashboard Builder')
-
-    st.sidebar.subheader('Heat map parameter')
-    time_hist_color = st.sidebar.selectbox('Color by', ('temp_min', 'temp_max')) 
-
-    st.sidebar.subheader('Donut chart parameter')
-    donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
-
-    st.sidebar.subheader('Line chart parameters')
-    plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
-    plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
-
-    st.sidebar.markdown('''
-    ---
-    Created with ❤️ by Techno|BOSS.
-    ''') 
-    # Add title 
-    st.title('Get a Dashbord view! :chart:')
-    #st.markdown('Here you can upload your file to create a Dashboard view to learn\
-    #            more from your Data. ')
-    
-    # To display a header text using css styling
+    # ~~~~~~~~~~~~~~~~~~~~~TAKING CARE OF THE SIDEBAR ~~~~~~~~~~~~~~~~~~~~~~~
+     # To display a header text using css styling
     st.markdown(""" <style> .font {
     font-size:20px ; font-family: 'Cooper Black'; color: #FF9633;} 
     </style> """, unsafe_allow_html=True)
@@ -255,6 +231,11 @@ if selected1 == "Dash":
     
     # Add a file uploader to allow users to upload photos
     uploaded_file2 = st.file_uploader("", type=['csv', 'xlsx'])
+    
+     # Add title 
+    st.title('Get a Dashbord view! :chart:')
+    #st.markdown('Here you can upload your file to create a Dashboard view to learn\
+    #            more from your Data. ')
     
     # Defining 2 functions to load csv and excel files
     @st.cache_data
@@ -271,23 +252,40 @@ if selected1 == "Dash":
     if uploaded_file2 is not None:
         if uploaded_file2.name[0][-4:] == 'xlsx':
             df = dataxl_upload2()
-            st.dataframe(data=df)
+            #st.dataframe(data=df)
         else:
             df = datacsv_upload2()
-            st.dataframe(data=df)
+            #st.dataframe(data=df)
             if 'datacsv_upload2' in st.session_state:
                 df = st.session_state.datacsv_upload2
             else:
                 df = datacsv_upload2()
-                st.session_state.datacsv_upload2 = df             
-    # Creating metrics Row A
+                st.session_state.datacsv_upload2 = df 
+
+    st.sidebar.header('Dashboard Builder')
+    st.sidebar.subheader('Heat map parameter')
+    time_hist_color = st.sidebar.selectbox('Color by', ('temp_min', 'temp_max')) 
+
+    st.sidebar.subheader('Donut chart parameter')
+    donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
+
+    st.sidebar.subheader('Line chart parameters')
+    plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
+    plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
+
+    st.sidebar.markdown('''
+    ---
+    Created with ❤️ by Techno|BOSS.
+    ''') 
+   
+    # Row A
     st.markdown('### Metrics')
     col1, col2, col3 = st.columns(3)
     col1.metric("Temperature", "70 °F", "1.2 °F")
     col2.metric("Wind", "9 mph", "-8%")
     col3.metric("Humidity", "86%", "4%")
-    
-    # Creating Row B
+
+    # Row B
     seattle_weather = pd.read_csv('https://raw.githubusercontent.com/tvst/plost/master/data/seattle-weather.csv', parse_dates=['date'])
     stocks = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/data/master/stocks_toy.csv')
 
@@ -295,15 +293,15 @@ if selected1 == "Dash":
     with c1:
         st.markdown('### Heatmap')
         plost.time_hist(
-            data=seattle_weather,
-            date='date',
-            x_unit='week',
-            y_unit='day',
-            color=time_hist_color,
-            aggregate='median',
-            legend=None,
-            height=345,
-            use_container_width=True)
+        data=seattle_weather,
+        date='date',
+        x_unit='week',
+        y_unit='day',
+        color=time_hist_color,
+        aggregate='median',
+        legend=None,
+        height=345,
+        use_container_width=True)
     with c2:
         st.markdown('### Donut chart')
         plost.donut_chart(
@@ -312,9 +310,10 @@ if selected1 == "Dash":
             color='company',
             legend='bottom', 
             use_container_width=True)
-# Creating Row C
-st.markdown('### Line chart')
-st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
+
+    # Row C
+    st.markdown('### Line chart')
+    st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
          
 # 4. ADD FUNCTIONALITY TO ASK BABA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == 'Baba':
