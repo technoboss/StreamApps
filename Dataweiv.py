@@ -51,7 +51,7 @@ with st.container():
 #         just ask Baba. Hey, smile you are on Data|weiv and you will enjoy!
 #      """)
 # ADD A MENU WIDGET ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-selected1 = option_menu(None, ["Home", "EDA", "Dash", "Baba", "Mailbox"], 
+selected1 = option_menu(None, ["Home", "EDA", "SaleDash", "Baba", "Mail"], 
     icons=['house', 'bar-chart-fill', "graph-up-arrow", "person-check-fill", "mailbox"], 
     menu_icon="cast", default_index=0, orientation="horizontal")
 selected1
@@ -66,6 +66,10 @@ if selected1 == "Home":
     #st.video("https://youtu.be/BfuwXQLqQh8")
     #video = pn.pane.Video('https://youtu.be/BfuwXQLqQh8', width=640, loop=True)
 
+    st.sidebar.markdown('''
+        ---
+        Created with ❤️ by Techno|BOSS.
+        ''') 
 # 2. ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == "EDA":
     # Add title 
@@ -220,9 +224,9 @@ if selected1 == "EDA":
             
             st.write(fig)
 # 3. ADD FUNCTIONALITY TO DASH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if selected1 == "Dash": 
+if selected1 == "SaleDash": 
     # ~~~~~~~~~~~~~~~~~~~~~TAKING CARE OF THE SIDEBAR ~~~~~~~~~~~~~~~~~~~~~~~
-     # To display a header text using css styling
+    # To display a header text using css styling
     st.markdown(""" <style> .font {
     font-size:20px ; font-family: 'Cooper Black'; color: #FF9633;} 
     </style> """, unsafe_allow_html=True)
@@ -262,59 +266,83 @@ if selected1 == "Dash":
                 df = datacsv_upload2()
                 st.session_state.datacsv_upload2 = df 
 
-    st.sidebar.header('Dashboard Builder')
-    st.sidebar.subheader('Heat map parameter')
-    time_hist_color = st.sidebar.selectbox('Color by', ('temp_min', 'temp_max')) 
+        st.sidebar.header('Dashboard Builder')
+        st.sidebar.subheader('Heat map parameter')
+        time_hist_color = st.sidebar.selectbox('Color by', ('temp_min', 'temp_max')) 
 
-    st.sidebar.subheader('Donut chart parameter')
-    donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
+        st.sidebar.subheader('Donut chart parameter')
+        donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
 
-    st.sidebar.subheader('Line chart parameters')
-    plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
-    plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
+        st.sidebar.subheader('Line chart parameters')
+        plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
+        plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
+ 
+        # Row A
+        st.markdown('### Metrics')
+        #df[df[filtercol]==filtercol2].value_counts()
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            filtercol = st.sidebar.selectbox('Select numeric column ', df.columns)
+            #filtercol2 = st.sidebar.selectbox('Where row value equal', df[filtercol].unique())
+            #filtercol2 = st.sidebar.selectbox('Where row value equal', df.columns.unique())
+            sum_df = df[filtercol].sum()
+            mean_df = df[filtercol].mean()
+            range_df = (df[filtercol].max() - df[filtercol].min())
+            min_df = df[filtercol].min() 
+            max_df = df[filtercol].max()
+            count_df = df[filtercol].count()
+            med_df = df[filtercol].median()
+            std_df = df[filtercol].std()   
 
-    st.sidebar.markdown('''
-    ---
-    Created with ❤️ by Techno|BOSS.
-    ''') 
-   
-    # Row A
-    st.markdown('### Metrics')
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Temperature", "70 °F", "1.2 °F")
-    col2.metric("Wind", "9 mph", "-8%")
-    col3.metric("Humidity", "86%", "4%")
+            #df_valcount = st.sidebar.selectbox('Aval', df[filtercol].groupby([filtercol]).df[filtercol].value_counts().unstack().fillna(0))
+            #metric_cnt = pd.Dtaframe(df[filtercol].filtercol2.value.counts())
+            #cnt_val = st.sidebar.selectbox('Value count', metric_cnt.tolist())
+            #query_df2 = int(query_df.filtercol2.count())
+            st.metric(
+                label=f"SUM {filtercol}", 
+                value= f"{sum_df:.2f}", 
+                delta=f"STD: {std_df:.0f}")
+        with col2:
+            st.metric(
+                label=f"AVG. {filtercol}", 
+                value=f"{mean_df:.2f}", 
+                delta=f"MAX: {max_df:.0f}")
+        with col3:
+            st.metric(
+                label="Humidity", 
+                value="86%", 
+                delta="4%")
 
-    # Row B
-    seattle_weather = pd.read_csv('https://raw.githubusercontent.com/tvst/plost/master/data/seattle-weather.csv', parse_dates=['date'])
-    stocks = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/data/master/stocks_toy.csv')
+        # Row B
+        seattle_weather = pd.read_csv('https://raw.githubusercontent.com/tvst/plost/master/data/seattle-weather.csv', parse_dates=['date'])
+        stocks = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/data/master/stocks_toy.csv')
 
-    c1, c2 = st.columns((7,3))
-    with c1:
-        st.markdown('### Heatmap')
-        plost.time_hist(
-        data=seattle_weather,
-        date='date',
-        x_unit='week',
-        y_unit='day',
-        color=time_hist_color,
-        aggregate='median',
-        legend=None,
-        height=345,
-        use_container_width=True)
-    with c2:
-        st.markdown('### Donut chart')
-        plost.donut_chart(
-            data=stocks,
-            theta=donut_theta,
-            color='company',
-            legend='bottom', 
+        c1, c2 = st.columns((7,3))
+        with c1:
+            st.markdown('### Heatmap')
+            plost.time_hist(
+            data=seattle_weather,
+            date='date',
+            x_unit='week',
+            y_unit='day',
+            color=time_hist_color,
+            aggregate='median',
+            legend=None,
+            height=345,
             use_container_width=True)
+        with c2:
+            st.markdown('### Donut chart')
+            plost.donut_chart(
+                data=stocks,
+                theta=donut_theta,
+                color='company',
+                legend='bottom', 
+                use_container_width=True)
 
-    # Row C
-    st.markdown('### Line chart')
-    st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
-         
+        # Row C
+        st.markdown('### Line chart')
+        st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
+            
 # 4. ADD FUNCTIONALITY TO ASK BABA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == 'Baba':
     # """This function uses the OpenAI Completion API to generate a 
@@ -369,7 +397,7 @@ if selected1 == 'Baba':
             message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
     
 # 5. ADD FONCTIONALITY TO EMAIL US ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if selected1 == 'Mailbox':
+if selected1 == 'Mail':
     st.header(':globe_with_meridians: Get in touch with us!')
     contact_form = """
     <form action="https://formsubmit.co/m.curtisdon@yahoo.co.uk" method="POST">
