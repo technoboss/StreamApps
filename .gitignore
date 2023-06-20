@@ -1,0 +1,11 @@
+node_modules
+.streamlit/secrets.toml
+others/My1stApp-1.ipynb
+others/login.py
+others/login.py
+others/stream_app1.py
+datasnitch.py.orig
+resources/
+resources/image/
+resources/video/
+pages/

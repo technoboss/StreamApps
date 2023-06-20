@@ -25,8 +25,11 @@ st.set_page_config (page_title="Data|weiv",
                     layout="wide"
 ) 
 # load the amended css file
-with open('E:/VS_Code/Webapps/StreamApps/style/style.css') as f:
+with open('style/style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+img2 = Image.open('Apps_resources/image/techno.png')
+st.sidebar.image(img2, width=250)
 
 # Adjusting page Top and bottom padding
 st.markdown("""
@@ -40,7 +43,7 @@ st.markdown("""
 
 # Adding top header image into a container
 with st.container():
-    image = Image.open("E:/VS_Code/Webapps/StreamApps/Apps_resources/image/dsproject2.png")
+    image = Image.open("Apps_resources/image/dsproject2.png")
     st.image(image, width=1050, use_column_width=True)
 
 # Defining a function to load Lottie animation
@@ -63,7 +66,7 @@ st.markdown('---')
 if selected1 == "Home":
     st.title(':red[**_Data|weiv_**] 🐼 a business EDA app')
     # Adding a video file
-    video_file = open('E:/VS_Code/Webapps/StreamApps/Apps_resources/video/dataweiv2.mp4', 'rb')
+    video_file = open('Apps_resources/video/dataweiv2.mp4', 'rb')
     video_bytes = video_file.read()
     st.video(video_bytes)
 
@@ -470,7 +473,7 @@ if selected1 == 'Mail':
 st.markdown('---')
 
 # Define Brand Logo image
-image = Image.open(r'E:/VS_Code/Webapps/StreamApps/Apps_resources/image/techno.png')  
+image = Image.open('Apps_resources/image/techno.png')  
 
 # Add 3 columns with different width
 left, middle, right = st.columns([0.3, 0.5, 0.2])
