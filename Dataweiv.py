@@ -2,7 +2,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from st_aggrid import AgGrid
+#from st_aggrid import AgGrid
 from  PIL import Image
 from validator_collection import validators
 from streamlit_extras.app_logo import add_logo
@@ -15,13 +15,16 @@ import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plost
-import panel as pn
+import plotly.graph_objects as go
+import requests 
+from streamlit_lottie import st_lottie
 
 # Setting the web app basic information
 st.set_page_config (page_title="Data|weiv",
                     page_icon=":game_die:",
                     layout="wide"
 ) 
+# load the amended css file
 with open('E:/VS_Code/Webapps/StreamApps/style/style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
@@ -40,18 +43,17 @@ with st.container():
     image = Image.open("E:/VS_Code/Webapps/StreamApps/resources/image/dsproject2.png")
     st.image(image, width=1050, use_column_width=True)
 
-# Add a header and expander in side bar
-# st.sidebar.markdown('<h1 style="font-size:2.5rem; font-family: Cooper Black; color: #FF9633">Data|weiv</h1>', unsafe_allow_html=True)
+# Defining a function to load Lottie animation
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+# Assigning image link to a variable
+lottie_estate = load_lottieurl('https://assets1.lottiefiles.com/packages/lf20_hbhhy6a8.json')
 
-# # Add a text in an expander frame
-# with st.sidebar.expander("About our App :rainbow:"):
-#      st.write("""
-#         Use this simple app to explore your data in csv or excel file. before \
-#         using this app you make sure your data is clean first. I you've any question, \
-#         just ask Baba. Hey, smile you are on Data|weiv and you will enjoy!
-#      """)
 # ADD A MENU WIDGET ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-selected1 = option_menu(None, ["Home", "EDA", "SaleDash", "Baba", "Mail"], 
+selected1 = option_menu(None, ["Home", "EDA", "Dash", "Baba", "Mail"], 
     icons=['house', 'bar-chart-fill', "graph-up-arrow", "person-check-fill", "mailbox"], 
     menu_icon="cast", default_index=0, orientation="horizontal")
 selected1
@@ -60,16 +62,35 @@ st.markdown('---')
 # 1. ADD FUNCTIONALITY TO HOME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == "Home":
     st.title(':red[**_Data|weiv_**] 🐼 a business EDA app')
-    video_file = open('E:/VS_Code/Webapps/StreamApps/resources/video/datascience2.mp4', 'rb')
+    # Adding a video file
+    video_file = open('E:/VS_Code/Webapps/StreamApps/resources/video/dataweiv2.mp4', 'rb')
     video_bytes = video_file.read()
     st.video(video_bytes)
-    #st.video("https://youtu.be/BfuwXQLqQh8")
-    #video = pn.pane.Video('https://youtu.be/BfuwXQLqQh8', width=640, loop=True)
 
-    st.sidebar.markdown('''
-        ---
-        Created with ❤️ by Techno|BOSS.
-        ''') 
+    # Adding some blank space
+    st.sidebar.markdown('##') 
+    st.sidebar.markdown('##')  
+    st.sidebar.markdown("---")    
+    st.sidebar.markdown('##') 
+    st.sidebar.markdown('##') 
+    st.sidebar.markdown('##') 
+    # Adding the animation in the sidebar
+    with st.sidebar:
+        st_lottie(
+                    lottie_estate, 
+                    speed=1, 
+                    reverse=False, 
+                    loop=True, 
+                    quality="medium", # medium, high
+                    #renderer="svg", # canvas
+                    height=None,
+                    width=None,
+                    key=None )
+        st.sidebar.markdown('##') 
+        st.sidebar.markdown('''
+            ---
+            Created with ❤️ by Techno|BOSS.
+            ''') 
 # 2. ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == "EDA":
     # Add title 
@@ -92,7 +113,6 @@ if selected1 == "EDA":
             return df
 
     def dataxl_upload():
-            #with open(uploaded_file, mode="rb") as excel_file:
             df = pd.read_excel(uploaded_file) 
             return df
     
@@ -122,19 +142,26 @@ if selected1 == "EDA":
         if opt == 'Bar':
             selected_column = st.sidebar.selectbox('Select a column for the bar plot', df.columns)
             st.write("Histogram Plots")
-            sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
             fig, ax = plt.subplots(figsize=(10, 4), dpi=200)
+            # Amend figure front and bacground color
+            #sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
+            fig.patch.set_alpha(0.0)
+            ax.patch.set_alpha(0.0)
+            # Plotting the data
             sns.histplot(df[selected_column], color='deepskyblue')
+            # Defining plot title and configuring its parameters
             Plot_title = f'{selected_column} histogram plot'
             ax.set_title(Plot_title , fontweight='bold', color='white', fontsize=15)    
             ax.grid(False)
+            # Defining x and y labels and ticks colors
             ax.xaxis.label.set_color('white')
             ax.yaxis.label.set_color('white')
             ax.tick_params(axis='both', colors='white')
             sns.despine()
+            # Rotate x label
             plt.xticks(rotation = 90)
+            # Display the plot
             st.pyplot(fig)
-            #AgGrid(df)
 
             # Button to download the generated plot
             filename = 'Histogram.png'
@@ -177,19 +204,25 @@ if selected1 == "EDA":
             st.write("Line plot")
             x_axis = st.sidebar.selectbox('Select the x-axis', df.columns)
             y_axis = st.sidebar.selectbox('Select the y-axis', df.columns)
-            # Visualize the data with seaborn and matplotlib 
+            # Set the figure parameters 
             fig, ax = plt.subplots(figsize=(10, 4), dpi=200)
+            # Plot the data
             sns.lineplot(data=df, x=df[x_axis], y=df[y_axis],
                             marker="o", ax=ax, color='deepskyblue')
             Plot_title = f'{x_axis} and {y_axis} line plot'
             ax.set_title(Plot_title , fontweight='bold', color='white', fontsize=15)
             # Amend figure front and bacground color
-            sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
+            #sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
+            fig.patch.set_alpha(0.0)
+            ax.patch.set_alpha(0.0)
+            # disabble background grid
             ax.grid(False)
+            # Set x an y labels and ticks color 
             ax.xaxis.label.set_color('white')
             ax.yaxis.label.set_color('white')
             ax.tick_params(axis='both', colors='white')
             sns.despine()
+            # rotate x label
             plt.xticks(rotation = 90)
             st.pyplot(fig)
 
@@ -224,7 +257,7 @@ if selected1 == "EDA":
             
             st.write(fig)
 # 3. ADD FUNCTIONALITY TO DASH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if selected1 == "SaleDash": 
+if selected1 == "Dash": 
     # ~~~~~~~~~~~~~~~~~~~~~TAKING CARE OF THE SIDEBAR ~~~~~~~~~~~~~~~~~~~~~~~
     # To display a header text using css styling
     st.markdown(""" <style> .font {
@@ -238,9 +271,9 @@ if selected1 == "SaleDash":
     
      # Add title 
     st.title('Get a Dashbord view! :chart:')
-    #st.markdown('Here you can upload your file to create a Dashboard view to learn\
-    #            more from your Data. ')
-    
+    st.markdown('Use this app to displays some KPIs and various visualization types from your data.\
+                Our app will only the first 100 rows of your files. :red[**_ONLY USE NUMERICAL DATA TO VIEW METRICS._**]')
+    st.markdown('---')
     # Defining 2 functions to load csv and excel files
     @st.cache_data
     def datacsv_upload2():
@@ -248,8 +281,7 @@ if selected1 == "SaleDash":
             return df
 
     def dataxl_upload2():
-            #with open(uploaded_file, mode="rb") as excel_file:
-            df = pd.read_excel(uploaded_file2) 
+            df = pd.read_excel(uploaded_file2.name) 
             return df
     
     # Load the uploaded file
@@ -267,24 +299,16 @@ if selected1 == "SaleDash":
                 st.session_state.datacsv_upload2 = df 
 
         st.sidebar.header('Dashboard Builder')
-        st.sidebar.subheader('Heat map parameter')
-        time_hist_color = st.sidebar.selectbox('Color by', ('temp_min', 'temp_max')) 
-
-        st.sidebar.subheader('Donut chart parameter')
-        donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
-
-        st.sidebar.subheader('Line chart parameters')
-        plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
-        plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
- 
-        # Row A
-        st.markdown('### Metrics')
-        #df[df[filtercol]==filtercol2].value_counts()
+        
+        # Defining 3 column to laverage the streamlit metric feature
+        st.sidebar.markdown('---')
+        st.markdown('### KPI Metrics')
         col1, col2, col3 = st.columns(3)
         with col1:
-            filtercol = st.sidebar.selectbox('Select numeric column ', df.columns)
-            #filtercol2 = st.sidebar.selectbox('Where row value equal', df[filtercol].unique())
-            #filtercol2 = st.sidebar.selectbox('Where row value equal', df.columns.unique())
+            st.sidebar.subheader('Select KPI Metrics')
+            filtercol = st.sidebar.selectbox('Select a :red[**numerical**] column to see Metrics', df.columns)
+            
+            # Defining stats data frame
             sum_df = df[filtercol].sum()
             mean_df = df[filtercol].mean()
             range_df = (df[filtercol].max() - df[filtercol].min())
@@ -292,12 +316,8 @@ if selected1 == "SaleDash":
             max_df = df[filtercol].max()
             count_df = df[filtercol].count()
             med_df = df[filtercol].median()
-            std_df = df[filtercol].std()   
+            std_df = df[filtercol].std()    
 
-            #df_valcount = st.sidebar.selectbox('Aval', df[filtercol].groupby([filtercol]).df[filtercol].value_counts().unstack().fillna(0))
-            #metric_cnt = pd.Dtaframe(df[filtercol].filtercol2.value.counts())
-            #cnt_val = st.sidebar.selectbox('Value count', metric_cnt.tolist())
-            #query_df2 = int(query_df.filtercol2.count())
             st.metric(
                 label=f"SUM {filtercol}", 
                 value= f"{sum_df:.2f}", 
@@ -309,46 +329,74 @@ if selected1 == "SaleDash":
                 delta=f"MAX: {max_df:.0f}")
         with col3:
             st.metric(
-                label="Humidity", 
-                value="86%", 
-                delta="4%")
-
+                label=f"Event COUNT", 
+                value=f"{count_df:.2f}", 
+                delta=f"RANGE: {range_df:.0f}")
+        st.markdown('---')      
         # Row B
-        seattle_weather = pd.read_csv('https://raw.githubusercontent.com/tvst/plost/master/data/seattle-weather.csv', parse_dates=['date'])
-        stocks = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/data/master/stocks_toy.csv')
-
-        c1, c2 = st.columns((7,3))
+        # Using 2 columns to display a heatmap and donut plot
+        c1, c2 = st.columns((8,2))
         with c1:
-            st.markdown('### Heatmap')
-            plost.time_hist(
-            data=seattle_weather,
-            date='date',
-            x_unit='week',
-            y_unit='day',
-            color=time_hist_color,
-            aggregate='median',
-            legend=None,
-            height=345,
-            use_container_width=True)
+            st.markdown('### Bar plot')
+            st.sidebar.markdown('---')
+            st.sidebar.subheader(':red[**Bar plot parameter**]')
+            # Sidebar filter
+            #Groupby_df = st.sidebar.selectbox('Select a column df', df.columns)
+            # defining a pandas groupy Dataframe
+            #heat_df = df.groupby([Groupby_df]).value_counts().unstack().fillna(0)
+            x_axis = st.sidebar.selectbox('Select the x-axis', df.columns)
+            y_axis = st.sidebar.selectbox('Select the y-axis', df.columns)
+            color = st.sidebar.selectbox('Select color param', df.columns)
+            #data_df = st.sidebar.selectbox('Select date param', df.columns)
+
+            fig = px.bar(df, x=x_axis, y=y_axis, color=color)
+            #fig.update_layout(width=500,height=500)
+
+            # Size the figure
+            #fig, ax = plt.subplots(figsize=(12, 5), dpi=160)
+            # set the figure facecolor opacity
+            #fig.patch.set_alpha(0.0)
+            # plot the correlation heatmap
+            #sns.heatmap(data= heat_df.corr(), linewidth=.1, fmt='.2f',
+                        #cmap='RdBu', annot=True)
+            #sns.heatmap(data=heat_df, cmap=sns.color_palette("crest", as_cmap=True))
+            
+            # define x an y axis label color
+            #ax.xaxis.label.set_color('white')
+            #ax.yaxis.label.set_color('white')
+            #ax.tick_params(axis='both', colors='white', labelsize=12) 
+            # display the plot
+            st.write(fig, use_container_width=True)
+
         with c2:
             st.markdown('### Donut chart')
-            plost.donut_chart(
-                data=stocks,
-                theta=donut_theta,
-                color='company',
-                legend='bottom', 
-                use_container_width=True)
+            st.sidebar.markdown('---')
+            st.sidebar.subheader(':red[**Donut chart parameter**]')
+            # setting up the filters
+            donut_filter1 = st.sidebar.selectbox('Select column for color', df.columns)
+            donut_filter2 = st.sidebar.selectbox('Select :red[**numerical**] data', df.columns)
+            donut_filter5 = st.sidebar.selectbox('Select thetha', df.columns)
+            donut_data = df.nlargest(3, donut_filter2)
 
+            plost.donut_chart(
+                    data=donut_data,
+                    theta = donut_filter5,
+                    color=donut_filter1,
+                    legend='bottom',
+                    use_container_width=True)
         # Row C
+        st.sidebar.markdown('---')
+        st.sidebar.subheader(':red[**Line chart parameters**]')
+        x_axis1 = st.sidebar.selectbox('Select your x axis', df.columns)
+        y_axis2 = st.sidebar.selectbox('Select your y axis', df.columns)
+        plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
         st.markdown('### Line chart')
-        st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
+        st.line_chart(df, x =  x_axis1, y = y_axis2, height = plot_height)
             
 # 4. ADD FUNCTIONALITY TO ASK BABA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == 'Baba':
     # """This function uses the OpenAI Completion API to generate a 
-    # response based on the given prompt. The temperature parameter controls 
-    # the randomness of the generated response. A higher temperature will result 
-    # in more random responses, while a lower temperature will result in more predictable responses."""
+    #    response based on the given prompt. """
     
     # Set GPT-3 API Key
     openai.api_key = st.secrets['api_secret']
