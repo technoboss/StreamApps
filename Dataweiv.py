@@ -152,7 +152,7 @@ if selected1 == "EDA":
             ax.patch.set_alpha(0.0)
             ax.spines['left'].set_color('white')
             ax.spines['bottom'].set_color('white')
-            
+
             # Plotting the data
             sns.histplot(df[selected_column], color='deepskyblue')
             # Defining plot title and configuring its parameters
@@ -282,7 +282,7 @@ if selected1 == "Dash":
      # Add title 
     st.title('Get a Dashbord view! :chart:')
     st.markdown('Use this app to displays some KPIs and various visualization types from your data.\
-                Our app will only the first 100 rows of your files. :red[**_ONLY USE NUMERICAL DATA TO VIEW METRICS._**]')
+                This app gives you a insight in your dataset. :red[**_ONLY USE NUMERICAL DATA TO VIEW METRICS._**]')
     st.markdown('---')
     # Defining 2 functions to load csv and excel files
     @st.cache_data
