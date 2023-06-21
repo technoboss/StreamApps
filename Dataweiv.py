@@ -150,6 +150,9 @@ if selected1 == "EDA":
             #sns.set(rc={'axes.facecolor':'black', 'figure.facecolor':'black'})
             fig.patch.set_alpha(0.0)
             ax.patch.set_alpha(0.0)
+            ax.spines['left'].set_color('white')
+            ax.spines['bottom'].set_color('white')
+            
             # Plotting the data
             sns.histplot(df[selected_column], color='deepskyblue')
             # Defining plot title and configuring its parameters
@@ -160,6 +163,7 @@ if selected1 == "EDA":
             ax.xaxis.label.set_color('white')
             ax.yaxis.label.set_color('white')
             ax.tick_params(axis='both', colors='white')
+
             sns.despine()
             # Rotate x label
             plt.xticks(rotation = 90)
@@ -224,6 +228,9 @@ if selected1 == "EDA":
             ax.xaxis.label.set_color('white')
             ax.yaxis.label.set_color('white')
             ax.tick_params(axis='both', colors='white')
+            ax.spines['left'].set_color('white')
+            ax.spines['bottom'].set_color('white')
+
             sns.despine()
             # rotate x label
             plt.xticks(rotation = 90)
