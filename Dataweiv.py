@@ -281,8 +281,8 @@ if selected1 == "Dash":
     
      # Add title 
     st.title('Get a Dashbord view! :chart:')
-    st.markdown('Use this app to displays some KPIs and various visualization types from your data.\
-                This app gives you a insight in your dataset. :red[**_ONLY USE NUMERICAL DATA TO VIEW METRICS._**]')
+    st.markdown('Use this app to displays some preset KPIs and various visualization types from your data.\
+                This app will gives you an insight in your dataset. :red[**_ONLY USE NUMERICAL DATA TO VIEW METRICS._**]')
     st.markdown('---')
     # Defining 2 functions to load csv and excel files
     @st.cache_data
