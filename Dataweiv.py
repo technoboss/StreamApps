@@ -3,9 +3,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from  PIL import Image
-#from st_aggrid import AgGrid
-#from validator_collection import validators
-#from streamlit_extras.app_logo import add_logo
 from streamlit_option_menu import option_menu
 from streamlit.components.v1 import html
 from streamlit_chat import message
@@ -92,15 +89,15 @@ if selected1 == "Home":
         st.sidebar.markdown('##') 
         st.sidebar.markdown('''
             ---
-            Created with ❤️ by Techno|BOSS.
+            Created with ❤️ by Techno|BOSS INTL.
             ''') 
 # 2. ADD FUNCTIONALITY TO EDA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if selected1 == "EDA":
     # Add title 
     st.title('Get a quick view in your data! :penguin:')
-    st.markdown('Here you can upload your data and visualize it using \
+    st.markdown('Here you can upload a CSV file to visualize it using \
                 various plot type. Don\'t forget Baba is your man, you can ask \
-                him anything you want to make your work easier.')
+                him anything you want...')
     
     # To display a header text using css styling
     st.markdown(""" <style> .font {
@@ -187,7 +184,7 @@ if selected1 == "EDA":
             stats = st.sidebar.radio("2. Quick Data Exploration:", options=("Filter by", "Count events"))
             
             if stats == "Filter by":
-                filtercol = st.sidebar.selectbox('Display column named ', df.columns)
+                filtercol = st.sidebar.selectbox('Display column name ', df.columns)
                 filtercol2 = st.sidebar.selectbox('Where row value equal', df[filtercol].unique())
                 st.sidebar.markdown('---')
                 st.write('Count number events by:')
