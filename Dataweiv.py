@@ -103,7 +103,7 @@ if selected1 == "EDA":
     st.markdown(""" <style> .font {
     font-size:25px ; font-family: 'Cooper Black'; color: #FF9633;} 
     </style> """, unsafe_allow_html=True)
-    st.markdown('<p class="font">Please upload a clean data file here...</p>', 
+    st.markdown('<p class="font">Please upload a clean CSV file here...</p>', 
                     unsafe_allow_html=True)
     
     # Defining 2 functions to load csv and excel files
@@ -270,7 +270,7 @@ if selected1 == "Dash":
     st.markdown(""" <style> .font {
     font-size:20px ; font-family: 'Cooper Black'; color: #FF9633;} 
     </style> """, unsafe_allow_html=True)
-    st.markdown('<p class="font">Please upload a clean data file here...</p>', 
+    st.markdown('<p class="font">Please upload a clean CSV file here...</p>', 
                     unsafe_allow_html=True) 
     
     # Add a file uploader to allow users to upload photos
